@@ -1,5 +1,5 @@
 let DATA={facturas:[],proyectos:[],clientes:[]};
-let monthlyChart=null,statusChart=null;
+let monthlyChart=null,statusChart=null,annualChart=null;
 const MONTHS=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 const CURRENT_YEAR=new Date().getFullYear();
 let projectYearChart=null;
@@ -40,9 +40,11 @@ function normalizeInvoice(r){return {Factura:r.Factura||"",Empresa:r.Empresa||""
 function normalizeProject(r){return {Codigo:r.Codigo||r.CODIGO||"",Gestor:r.Gestor||"",Monto:Number(r.Monto||0),Estado:clean(r.Estado).toUpperCase(),Fecha:r.Fecha||"",Factura:r.Factura||""}}
 function setupFilters(){
   const years=[...new Set(DATA.facturas.map(getYear).filter(Boolean))].sort((a,b)=>b-a);
-  document.getElementById("yearFilter").innerHTML='<option value="all">Todos los años</option>'+years.map(y=>`<option>${y}</option>`).join("");
+  const allYears=[...new Set([CURRENT_YEAR,...years])].sort((a,b)=>b-a);
+  document.getElementById("yearFilter").innerHTML=allYears.map(y=>`<option value="${y}" ${y===CURRENT_YEAR?"selected":""}>${y}</option>`).join("")+`<option value="all">Todos los años</option>`;
   document.getElementById("monthFilter").innerHTML='<option value="all">Todos los meses</option>'+MONTHS.map((m,i)=>`<option value="${i+1}">${m}</option>`).join("");
-  document.getElementById("yearFilter").onchange=renderDashboard;document.getElementById("monthFilter").onchange=renderDashboard;
+  document.getElementById("yearFilter").onchange=renderDashboard;
+  document.getElementById("monthFilter").onchange=renderDashboard;
 }
 function filteredInvoices(){
   let a=DATA.facturas.map(normalizeInvoice);
@@ -50,13 +52,35 @@ function filteredInvoices(){
   return a.filter(r=>(y==="all"||getYear(r)==y)&&(m==="all"||getMonth(r)==m));
 }
 function renderDashboard(){
-  const inv=filteredInvoices(), total=inv.reduce((s,r)=>s+r.Monto,0), paid=inv.filter(r=>r.Estado==="CANCELADO").reduce((s,r)=>s+r.Monto,0),pending=inv.filter(r=>r.Estado==="PENDIENTE").reduce((s,r)=>s+r.Monto,0);
+  const inv=filteredInvoices(), total=inv.reduce((s,r)=>s+r.Monto,0), paid=inv.filter(r=>r.Estado==="CANCELADO").reduce((s,r)=>s+r.Monto,0), pending=inv.filter(r=>r.Estado==="PENDIENTE").reduce((s,r)=>s+r.Monto,0);
   const proj=DATA.proyectos.map(normalizeProject), toInvoice=proj.filter(r=>["FALTA EMITIR","PENDIENTE"].includes(r.Factura));
   const toInvoiceTotal=toInvoice.reduce((s,r)=>s+r.Monto,0);
-  setText("heroTotal",money(total));setText("heroPeriod",document.getElementById("yearFilter")?.value==="all"?"Todos los registros":"Filtro aplicado");
+  const selectedYear=document.getElementById("yearFilter")?.value||String(CURRENT_YEAR);
+  setText("heroTotal",money(total));
+  setText("heroPeriod",selectedYear==="all"?"Todos los años":`Año ${selectedYear}`);
   setText("kFacturado",money(total));setText("kCobrado",money(paid));setText("kPendiente",money(pending));setText("kPorFacturar",money(toInvoiceTotal));
   const byMonth=Array(12).fill(0);inv.forEach(r=>{const m=getMonth(r);if(m)byMonth[m-1]+=r.Monto});
-  drawMonthly(byMonth);drawStatus(inv);renderAttention(proj);renderRecent(inv);
+  drawMonthly(byMonth);drawStatus(inv);drawAnnualBilling();renderAttention(proj);renderRecent(inv);
+}
+
+function drawAnnualBilling(){
+  const all=DATA.facturas.map(normalizeInvoice);
+  const map={};
+  all.forEach(r=>{const y=getYear(r);if(y)map[y]=(map[y]||0)+r.Monto});
+  const years=Object.keys(map).map(Number).sort((a,b)=>a-b);
+  const values=years.map(y=>map[y]);
+  const total=values.reduce((s,v)=>s+v,0);
+  const currentYear=Number(document.getElementById("yearFilter")?.value||CURRENT_YEAR);
+  const current=map[currentYear]||0;
+  const average=years.length?total/years.length:0;
+  setText("annualTotal",money(total));
+  setText("annualCurrent",money(current));
+  setText("annualAverage",money(average));
+  setText("annualInvoices",all.length.toLocaleString("es-PE"));
+  const ctx=document.getElementById("annualChart");
+  if(!ctx)return;
+  if(annualChart)annualChart.destroy();
+  annualChart=new Chart(ctx,{type:"bar",data:{labels:years,datasets:[{label:"Facturación",data:values,backgroundColor:"rgba(139,124,255,.42)",borderColor:"#8b7cff",borderWidth:1,borderRadius:7}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>" S/ "+Number(ctx.raw||0).toLocaleString("es-PE")}}},scales:{x:{grid:{display:false},ticks:{color:"#697384"}},y:{grid:{color:"rgba(36,42,54,.7)"},ticks:{color:"#697384",callback:v=>"S/ "+Number(v).toLocaleString("es-PE")}}}}});
 }
 function drawMonthly(data){const ctx=document.getElementById("monthlyChart");if(!ctx)return;if(monthlyChart)monthlyChart.destroy();monthlyChart=new Chart(ctx,{type:"bar",data:{labels:MONTHS,datasets:[{data,backgroundColor:"rgba(139,124,255,.42)",borderColor:"#8b7cff",borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:"#697384",font:{size:10}}},y:{grid:{color:"rgba(36,42,54,.7)"},ticks:{color:"#697384",font:{size:9},callback:v=>"S/ "+Number(v).toLocaleString("es-PE")}}}}})}
 function drawStatus(inv){const groups={CANCELADO:0,PENDIENTE:0,"NO PAGADO":0,ANULADO:0,OTROS:0};inv.forEach(r=>groups[groups[r.Estado]!=null?r.Estado:"OTROS"]+=r.Monto);const labels=["CANCELADO","PENDIENTE","NO PAGADO","ANULADO","OTROS"];const vals=labels.map(k=>groups[k]);const ctx=document.getElementById("statusChart");if(!ctx)return;if(statusChart)statusChart.destroy();statusChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:["#48c78e","#e7ad55","#ee6b78","#5ca9ff","#4b5362"],borderWidth:0}]},options:{cutout:"70%",plugins:{legend:{display:false}}}});document.getElementById("statusLegend").innerHTML=labels.map((l,i)=>`<div class="legend-row"><span>${l}</span><b>${money(vals[i])}</b></div>`).join("")}

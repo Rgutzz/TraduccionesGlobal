@@ -31,7 +31,7 @@
     <header class="topbar">
       <div><div class="eyebrow">Panel principal</div><h1>Resumen</h1></div>
       <div class="top-actions">
-        <select id="yearFilter"><option value="all">Todos los años</option></select>
+        <select id="yearFilter" aria-label="Año"></select>
         <select id="monthFilter"><option value="all">Todos los meses</option></select>
         <span class="connection-status" data-connection-status>Conectando…</span><button class="icon-btn" onclick="loadData()" title="Actualizar">↻</button>
       </div>
@@ -52,13 +52,29 @@
 
     <section class="grid-2">
       <article class="panel chart-panel">
-        <div class="panel-head"><div><h3>Facturación mensual</h3><p>Evolución de ingresos</p></div><span class="panel-tag">S/</span></div>
+        <div class="panel-head"><div><h3>Facturación mensual</h3><p>Evolución de ingresos del año seleccionado</p></div><span class="panel-tag">S/</span></div>
         <div class="chart-wrap"><canvas id="monthlyChart"></canvas></div>
       </article>
       <article class="panel">
         <div class="panel-head"><div><h3>Estado de cobranza</h3><p>Distribución de facturas</p></div></div>
         <div class="donut-wrap"><div class="donut-chart"><canvas id="statusChart"></canvas></div><div id="statusLegend" class="legend"></div></div>
       </article>
+    </section>
+
+    <section class="panel annual-panel">
+      <div class="annual-layout">
+        <div class="annual-chart-area">
+          <div class="panel-head"><div><h3>Facturación por año</h3><p>Comparación de la facturación acumulada por año</p></div><span class="panel-tag">HISTÓRICO</span></div>
+          <div class="chart-wrap annual-chart-wrap"><canvas id="annualChart"></canvas></div>
+        </div>
+        <div class="annual-summary">
+          <div class="annual-summary-title">Resumen de facturación</div>
+          <div class="annual-stat"><span>Total histórico</span><strong id="annualTotal">S/ 0</strong></div>
+          <div class="annual-stat"><span>Año seleccionado</span><strong id="annualCurrent">S/ 0</strong></div>
+          <div class="annual-stat"><span>Promedio anual</span><strong id="annualAverage">S/ 0</strong></div>
+          <div class="annual-stat"><span>Facturas emitidas</span><strong id="annualInvoices">0</strong></div>
+        </div>
+      </div>
     </section>
 
     <section class="grid-2">
