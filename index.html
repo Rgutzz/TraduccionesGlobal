@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traducciones · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">T</div>
+      <div><strong>Traducciones</strong><span>Control & Finanzas</span></div>
+    </div>
+    <nav>
+      <a class="nav-link active" href="/"><span>◈</span> Dashboard</a>
+      <a class="nav-link" href="/proyectos.html"><span>◫</span> Proyectos</a>
+      <a class="nav-link" href="/facturas.html"><span>▣</span> Facturas</a>
+      <a class="nav-link" href="/datos.html"><span>⌘</span> Datos</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="connection"><i></i><span>Google Sheets</span><small>Conexión preparada</small></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">Panel principal</div><h1>Resumen</h1></div>
+      <div class="top-actions">
+        <select id="yearFilter"><option value="all">Todos los años</option></select>
+        <select id="monthFilter"><option value="all">Todos los meses</option></select>
+        <span class="connection-status" data-connection-status>Conectando…</span><button class="icon-btn" onclick="loadData()" title="Actualizar">↻</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div><span class="pill">CONTROL FINANCIERO</span><h2>Tu negocio de traducciones,<br><em>en una sola vista.</em></h2>
+      <p>Facturación, cobros y proyectos pendientes sin tener que revisar varias hojas.</p></div>
+      <div class="hero-stat"><span>Facturación seleccionada</span><strong id="heroTotal">S/ 0</strong><small id="heroPeriod">Todos los registros</small></div>
+    </section>
+
+    <section class="kpis">
+      <article class="kpi"><div class="kpi-icon purple">S/</div><span>Facturado</span><strong id="kFacturado">S/ 0</strong><small>Según filtros</small></article>
+      <article class="kpi"><div class="kpi-icon green">✓</div><span>Cobrado</span><strong id="kCobrado">S/ 0</strong><small>Facturas canceladas</small></article>
+      <article class="kpi"><div class="kpi-icon amber">◷</div><span>Por cobrar</span><strong id="kPendiente">S/ 0</strong><small>Facturas pendientes</small></article>
+      <article class="kpi"><div class="kpi-icon red">!</div><span>Por facturar</span><strong id="kPorFacturar">S/ 0</strong><small>Proyectos entregados</small></article>
+    </section>
+
+    <section class="grid-2">
+      <article class="panel chart-panel">
+        <div class="panel-head"><div><h3>Facturación mensual</h3><p>Evolución de ingresos</p></div><span class="panel-tag">S/</span></div>
+        <div class="chart-wrap"><canvas id="monthlyChart"></canvas></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><div><h3>Estado de cobranza</h3><p>Distribución de facturas</p></div></div>
+        <div class="donut-wrap"><div class="donut-chart"><canvas id="statusChart"></canvas></div><div id="statusLegend" class="legend"></div></div>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="panel">
+        <div class="panel-head"><div><h3>⚠️ Atención</h3><p>Lo que requiere acción</p></div><a href="/proyectos.html" class="text-link">Ver proyectos →</a></div>
+        <div id="attentionList" class="attention-list"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><div><h3>Últimas facturas</h3><p>Movimientos recientes</p></div><a href="/facturas.html" class="text-link">Ver todas →</a></div>
+        <div id="recentInvoices" class="mini-table"></div>
+      </article>
+    </section>
+
+    <footer>Dashboard de Traducciones · Fuente de datos: Google Sheets</footer>
+  </main>
+</div>
+<script src="/assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadData();
+  setupFilters();
+  renderDashboard();
+});
+</script>
+</body>
+</html>

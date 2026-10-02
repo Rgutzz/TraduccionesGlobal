@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traducciones · Datos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css"></head>
+<body><div class="app-shell">
+<aside class="sidebar"><div class="brand"><div class="brand-mark">T</div><div><strong>Traducciones</strong><span>Control & Finanzas</span></div></div>
+<nav><a class="nav-link" href="/"><span>◈</span> Dashboard</a><a class="nav-link" href="/proyectos.html"><span>◫</span> Proyectos</a><a class="nav-link" href="/facturas.html"><span>▣</span> Facturas</a><a class="nav-link active" href="/datos.html"><span>⌘</span> Datos</a></nav>
+<div class="sidebar-bottom"><div class="connection"><i></i><span>Google Sheets</span><small>Conexión preparada</small></div></div></aside>
+<main class="main"><header class="topbar"><div><div class="eyebrow">Información de referencia</div><h1>Datos</h1></div></header>
+<section class="grid-2">
+<article class="panel"><div class="panel-head"><div><h3>Clientes</h3><p>Directorio de clientes</p></div></div><div id="clientsList" class="data-list"></div></article>
+<article class="panel"><div class="panel-head"><div><h3>Tarifas y otros</h3><p>Información de referencia</p></div></div><div class="empty-note">Este módulo queda preparado para incorporar las tarifas y formularios que actualmente manejas en <b>Tarifas y Otros</b>.</div></article>
+</section>
+<section class="panel"><div class="panel-head"><div><h3>Datos administrativos</h3><p>Acceso rápido a información que actualmente está en la hoja Datos.</p></div></div><div class="empty-note">Por seguridad, los datos bancarios no se muestran en esta primera maqueta. Podemos añadirlos después con protección adicional.</div></section>
+<footer>Datos de referencia · Google Sheets</footer></main></div>
+<script src="/assets/app.js"></script><script>document.addEventListener("DOMContentLoaded",async()=>{await loadData();renderClients();});</script></body></html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Traducciones · Facturas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css"></head>
+<body><div class="app-shell">
+<aside class="sidebar"><div class="brand"><div class="brand-mark">T</div><div><strong>Traducciones</strong><span>Control & Finanzas</span></div></div>
+<nav><a class="nav-link" href="/"><span>◈</span> Dashboard</a><a class="nav-link" href="/proyectos.html"><span>◫</span> Proyectos</a><a class="nav-link active" href="/facturas.html"><span>▣</span> Facturas</a><a class="nav-link" href="/datos.html"><span>⌘</span> Datos</a></nav>
+<div class="sidebar-bottom"><div class="connection"><i></i><span>Google Sheets</span><small>Conexión preparada</small></div></div></aside>
+<main class="main"><header class="topbar"><div><div class="eyebrow">Control financiero</div><h1>Facturas</h1></div><span class="connection-status" data-connection-status>Conectando…</span><button class="icon-btn" onclick="loadData().then(renderInvoices)">↻</button></header>
+<div class="invoice-summary"><div><span>Total registros</span><strong id="iTotal">0</strong></div><div><span>Canceladas</span><strong id="iPaid">0</strong></div><div><span>Pendientes</span><strong id="iPending">0</strong></div><div><span>No pagadas</span><strong id="iUnpaid">0</strong></div></div>
+<section class="panel"><div class="toolbar"><div><h3>Registro de facturas</h3><p id="invoiceCount">0 registros</p></div><div class="toolbar-actions"><input id="invoiceSearch" class="search" placeholder="⌕ Buscar factura, empresa o código…" oninput="renderInvoices()"><select id="invoiceStatus" onchange="renderInvoices()"><option value="all">Todos los estados</option></select></div></div>
+<div class="table-scroll"><table><thead><tr><th>Factura</th><th>Empresa</th><th>Código</th><th>Fecha</th><th>Monto</th><th>Estado</th><th>Pago</th></tr></thead><tbody id="invoiceBody"></tbody></table></div></section>
+<footer>Facturas · Google Sheets</footer></main></div>
+<script src="/assets/app.js"></script><script>document.addEventListener("DOMContentLoaded",async()=>{await loadData();setupInvoiceFilters();renderInvoices();});</script></body></html>
