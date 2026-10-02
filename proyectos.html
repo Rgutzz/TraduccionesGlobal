@@ -10,12 +10,14 @@
 <div class="sidebar-bottom"><div class="connection"><i></i><span>Google Sheets</span><small>Conexión preparada</small></div></div></aside>
 <main class="main"><header class="topbar"><div><div class="eyebrow">Seguimiento operativo</div><h1>Proyectos</h1></div><span class="connection-status" data-connection-status>Conectando…</span><button class="icon-btn" onclick="loadData().then(renderProjects)">↻</button></header>
 <section class="page-intro"><div><h2>Que ningún proyecto se quede sin facturar.</h2><p>Vista de seguimiento basada en <b>Resumen cotizaciones</b>.</p></div></section>
+<div class="toolbar project-filters"><div></div><div class="toolbar-actions"><select id="projectYear" aria-label="Año"></select></div></div>
 <div class="status-cards">
 <div class="status-card"><span>Por aprobar</span><strong id="pAprobar">0</strong></div>
 <div class="status-card"><span>Entregados</span><strong id="pEntregados">0</strong></div>
 <div class="status-card warn"><span>Falta emitir</span><strong id="pFalta">0</strong></div>
 <div class="status-card good"><span>Facturados / pagados</span><strong id="pPagados">0</strong></div>
 </div>
+<section class="panel"><div class="panel-head"><div><h3>Resumen de proyectos por año</h3><p>Valor acumulado de proyectos registrados por año.</p></div></div><div class="chart-wrap"><canvas id="projectYearChart"></canvas></div></section>
 <section class="panel"><div class="toolbar"><div><h3>Seguimiento de proyectos</h3><p id="projectCount">0 registros</p></div><div class="toolbar-actions"><input id="projectSearch" class="search" placeholder="⌕ Buscar código o gestor…" oninput="renderProjects()"><select id="projectStatus" onchange="renderProjects()"><option value="all">Todos los estados</option></select></div></div>
 <div class="table-scroll"><table><thead><tr><th>Código</th><th>Gestor</th><th>Monto</th><th>Estado</th><th>Fecha</th><th>Factura</th><th>Acción</th></tr></thead><tbody id="projectBody"></tbody></table></div></section>
 <footer>Resumen cotizaciones · Google Sheets</footer></main></div>
